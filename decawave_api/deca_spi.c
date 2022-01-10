@@ -13,17 +13,17 @@
 
 #include "deca_spi.h"
 #include "deca_device_api.h"
-#include "esp32-hal-gpio.h"
-#include <Arduino.h>
+// #include "esp32-hal-gpio.h"
+// #include <Arduino.h>
 /* #include <port.h> */
 /* #include <stm32f4xx_hal_def.h> */
 
 /* extern  SPI_HandleTypeDef hspi1;    /\*clocked from 72MHz*\/ */
 
 // Arduino Porting
-#include <SPI.h>
+// #include <SPI.h>
 
-extern SPIClass DWM_SPI;
+// extern SPIClass DWM_SPI;
 
 /****************************************************************************/ /**
                                                                                 *
@@ -59,31 +59,31 @@ int closespi(void) { return 0; } // end closespi()
 int writetospiwithcrc(uint16_t headerLength, const uint8_t *headerBuffer,
                       uint16_t bodyLength, const uint8_t *bodyBuffer,
                       uint8_t crc8) {
-  Serial.println("called writetospiwithcrc");
-  Serial.printf("  header length: %d\n", headerLength);
-  Serial.printf("  header body: ");
-  for (int i = 0; i < headerLength; i++) {
-    Serial.printf("%x ", headerBuffer[i]);
-  }
-  Serial.println("");
+  // Serial.println("called writetospiwithcrc");
+  // Serial.printf("  header length: %d\n", headerLength);
+  // Serial.printf("  header body: ");
+  // for (int i = 0; i < headerLength; i++) {
+  //   Serial.printf("%x ", headerBuffer[i]);
+  // }
+  // Serial.println("");
 
-  Serial.printf("  body length: %d\n", headerLength);
-  Serial.printf("  body body: ");
-  for (int i = 0; i < bodyLength; i++) {
-    Serial.printf("%x ", bodyBuffer[i]);
-  }
-  Serial.println("");
-  Serial.printf("  crc: %d\n", crc8);
+  // Serial.printf("  body length: %d\n", headerLength);
+  // Serial.printf("  body body: ");
+  // for (int i = 0; i < bodyLength; i++) {
+  //   Serial.printf("%x ", bodyBuffer[i]);
+  // }
+  // Serial.println("");
+  // Serial.printf("  crc: %d\n", crc8);
 
   decaIrqStatus_t stat;
   stat = decamutexon();
-  DWM_SPI.beginTransaction(SPISettings(1000000, MSBFIRST, SPI_MODE0));
-  DWM_SPI.writeBytes(headerBuffer, headerLength);
-  if (bodyLength > 0) {
-    DWM_SPI.writeBytes(bodyBuffer, bodyLength);
-  }
-  DWM_SPI.write(crc8);
-  DWM_SPI.endTransaction();
+  // DWM_SPI.beginTransaction(SPISettings(1000000, MSBFIRST, SPI_MODE0));
+  // DWM_SPI.writeBytes(headerBuffer, headerLength);
+  // if (bodyLength > 0) {
+  //   DWM_SPI.writeBytes(bodyBuffer, bodyLength);
+  // }
+  // DWM_SPI.write(crc8);
+  // DWM_SPI.endTransaction();
 
   /* while (HAL_SPI_GetState(&hspi1) != HAL_SPI_STATE_READY); */
 
@@ -116,14 +116,15 @@ int writetospi(uint16_t headerLength, const uint8_t *headerBuffer,
   decaIrqStatus_t stat;
   stat = decamutexon();
 
-  DWM_SPI.beginTransaction(SPISettings(38000000L, MSBFIRST, SPI_MODE0));
-  digitalWrite(5, LOW);
-  DWM_SPI.writeBytes(headerBuffer, headerLength);
-  if (bodyLength > 0) {
-    DWM_SPI.writeBytes(bodyBuffer, bodyLength);
-  }
-  digitalWrite(5, HIGH);
-  DWM_SPI.endTransaction();
+  // DWM_SPI.beginTransaction(SPISettings(38000000L, MSBFIRST, SPI_MODE0));
+  // digitalWrite(5, LOW);
+  // DWM_SPI.writeBytes(headerBuffer, headerLength);
+  // if (bodyLength > 0) {
+  //   DWM_SPI.writeBytes(bodyBuffer, bodyLength);
+  // }
+  // digitalWrite(5, HIGH);
+  // DWM_SPI.endTransaction();
+
   decamutexoff(stat);
   return 0;
 } // end writetospi()
@@ -169,15 +170,15 @@ int readfromspi(uint16_t headerLength, uint8_t *headerBuffer,
                 uint16_t readLength, uint8_t *readBuffer) {
   decaIrqStatus_t stat;
   stat = decamutexon();
-  DWM_SPI.beginTransaction(SPISettings(10000000, MSBFIRST, SPI_MODE0));
-  digitalWrite(SS, LOW);
-  for (auto i = 0; i < headerLength; i++) {
-    DWM_SPI.write(headerBuffer[i]);
-  }
-  delay(5);
-  DWM_SPI.transferBytes(NULL, readBuffer, readLength);
-  digitalWrite(SS, HIGH);
-  DWM_SPI.endTransaction();
+  // DWM_SPI.beginTransaction(SPISettings(10000000, MSBFIRST, SPI_MODE0));
+  // digitalWrite(SS, LOW);
+  // for (auto i = 0; i < headerLength; i++) {
+  //   DWM_SPI.write(headerBuffer[i]);
+  // }
+  // delay(5);
+  // DWM_SPI.transferBytes(NULL, readBuffer, readLength);
+  // digitalWrite(SS, HIGH);
+  // DWM_SPI.endTransaction();
   decamutexoff(stat);
   return 0;
 } // end readfromspi()

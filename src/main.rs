@@ -1,4 +1,5 @@
 #![allow(unused_imports)]
+#![allow(unused_variables)]
 use std::io::{Read, Write};
 use std::net::{TcpListener, TcpStream};
 use std::sync::{Condvar, Mutex};
@@ -47,12 +48,9 @@ use embedded_graphics::prelude::*;
 use embedded_graphics::primitives::*;
 use embedded_graphics::text::*;
 
-use ili9341;
 use ssd1306;
 use ssd1306::mode::DisplayConfig;
-use st7789;
 
-#![allow(dead_code)]
 const SSID: &str = "PJJ-KSR";
 const PASS: &str = "pjj9794pjj9794!";
 
@@ -69,11 +67,11 @@ fn main() -> Result<()> {
     let peripherals = Peripherals::take().unwrap();
     let pins = peripherals.pins;
 
-    let netif_stack = Arc::new(EspNetifStack::new()?);
-    let sys_loop_stack = Arc::new(EspSysLoopStack::new()?);
-    let default_nvs = Arc::new(EspDefaultNvs::new()?);
+    // let netif_stack = Arc::new(EspNetifStack::new()?);
+    // let sys_loop_stack = Arc::new(EspSysLoopStack::new()?);
+    // let default_nvs = Arc::new(EspDefaultNvs::new()?);
 
-    // let spi = peripherals.spi1;
+    let spi = peripherals.spi1;
     heltec_hello_world(pins.gpio16, peripherals.i2c0, pins.gpio4, pins.gpio15)?;
     // let mut wifi = wifi(
     //     netif_stack.clone(),

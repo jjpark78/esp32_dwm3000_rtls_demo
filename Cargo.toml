@@ -1,11 +1,12 @@
 [package]
-name = "ESP32-Decawave-RTLS-Prototype-for-Partner"
+name = "rtls-demo-jltech"
 version = "0.0.1"
-authors = ["jjpark@jltech.co.kr"]
-categories = ["embedded", "rtls"]
-keywords = ["embedded", "svc", "idf", "esp-idf", "esp32"]
-description = ""
-license = "Copyright @jltech lab 2022"
+authors = ["jjpark"]
+edition = "2018"
+categories = ["embedded"]
+keywords = ["embedded", "rtls", "uwb", "esp32"]
+description = "a prototype RTLS system using decawave's dwm3000 chip and power of esp32"
+license = "Copyright"
 readme = "README.md"
 
 [patch.crates-io]
@@ -13,7 +14,6 @@ smol = { git = "https://github.com/esp-rs-compat/smol" }
 polling = { git = "https://github.com/esp-rs-compat/polling" }
 socket2 = { git = "https://github.com/esp-rs-compat/socket2" }
 getrandom = { version = "0.2", git = "https://github.com/esp-rs-compat/getrandom.git" }
-#getrandom1 = { version = "0.1", git = "https://github.com/esp-rs-compat/getrandom.git", package = "getrandom", branch = "0.1" }
 
 [profile.release]
 opt-level = "s"
@@ -23,8 +23,6 @@ debug = true # Symbols are nice and they don't increase the size on Flash
 opt-level = "z"
 
 [features]
-# Enable this feature for the build to use ESP-IDF native tooling instead of PlatformIO under the hood
-# native = ["esp-idf-sys/native"]
 experimental = ["esp-idf-svc/experimental", "embedded-svc/experimental"]
 
 [dependencies]
@@ -39,12 +37,14 @@ embedded-hal = "0.2"
 embedded-graphics = "0.7"
 display-interface = "0.4"
 display-interface-spi = "0.4"
-ssd1306 = "0.7"
 smol = "1.2"
-# bindgen
-# cc
+ssd1306 = "0.7"
+# bindgen = "0.58.1"
 
 [build-dependencies]
 embuild = "0.27"
 anyhow = "1"
-
+bindgen = "0.58.1"
+cc = "1.0.72"
+# Future; might be possible once https://github.com/rust-lang/cargo/issues/9096 hits Cargo nightly:
+#rust-esp32-ulp-blink = { git = "https://github.com/ivmarkov/rust-esp32-ulp-blink", artifact = "bin" }

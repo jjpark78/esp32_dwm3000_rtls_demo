@@ -1,9 +1,15 @@
+extern crate bindgen;
+extern crate cc;
+
+use std::env;
+use std::path::Path;
 use std::path::PathBuf;
 
 use embuild::{
-    self, bingen,
+    // self, bindgen, bingen,
+    self,
     build::{CfgArgs, LinkArgs},
-    cargo, symgen,
+    // cargo, symgen,
 };
 
 fn main() -> anyhow::Result<()> {
@@ -12,18 +18,36 @@ fn main() -> anyhow::Result<()> {
 
     let cfg = CfgArgs::try_from_env("ESP_IDF")?;
 
-    if cfg.get("esp32s2").is_some() {
-        // Future; might be possible once https://github.com/rust-lang/cargo/issues/9096 hits Cargo nightly:
-        //let ulp_elf = PathBuf::from(env::var_os("CARGO_BIN_FILE_RUST_ESP32_ULP_BLINK_rust_esp32_ulp_blink").unwrap());
-
-        let ulp_elf = PathBuf::from("ulp").join("rust-esp32-ulp-blink");
-        symgen::run(&ulp_elf, 0x5000_0000)?; // This is where the RTC Slow Mem is mapped within the ESP32-S2 memory space
-        bingen::run(&ulp_elf)?;
-
-        cargo::track_file(ulp_elf);
-    }
-
     cfg.output();
+
+    //for DWM3000 Module
+    cc::Build::new()
+        .file("./decawave_api/port.c")
+        .file("./decawave_api/deca_spi.c")
+        .file("./decawave_api/deca_device.c")
+        .file("./decawave_api/deca_mutex.c")
+        .file("./decawave_api/deca_sleep.c")
+        .file("./decawave_api/shared_functions.c")
+        .file("./decawave_api/MAC_802_15_8/mac_802_15_8.c")
+        .file("./decawave_api/MAC_802_15_4/mac_802_15_4.c")
+        .includes(Some(Path::new("./decawave_api")))
+        .define("USE_ZLIB", None)
+        .compile("libdwm3000.a");
+
+    let deca_bindings = bindgen::Builder::default()
+        .clang_arg("-I./decawave_api")
+        .header("./decawave_api/wrapper.h")
+        .generate()
+        .expect("Unable to generate decawave's bindings");
+
+    let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
+
+    deca_bindings
+        .write_to_file(out_path.join("bindings.rs"))
+        .expect("Could not write bindings!");
+
+    println!("cargo:rustc-link-lib=dwm3000");
+    println!("cargo:rerun-if-changed=./decawave_api/wrapper.h");
 
     Ok(())
 }
